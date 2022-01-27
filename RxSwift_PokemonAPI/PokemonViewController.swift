@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import Alamofire
 import RxSwift
 import RxCocoa
 
 class PokemonViewController: UIViewController {
     
     let list = ["セル"]
+    
+    let disposeBag = DisposeBag()
     
     var tableView: UITableView = {
         let tableView = UITableView()
@@ -25,6 +28,7 @@ class PokemonViewController: UIViewController {
         tableView.dataSource = self
         self.view.addSubview(tableView)
         lauout()
+        apiCall()
     }
     
     func lauout() {
@@ -36,6 +40,17 @@ class PokemonViewController: UIViewController {
         let leading = tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0)
         let bottom = tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0)
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
+    }
+    
+    func apiCall() {
+        APIClient.call(PokemonRequest.get, disposeBag,
+                       onSuccess: { responese in
+                        print("成功", responese.data?.debugDescription)
+                        print("成功", responese.result)
+                       },
+                       onError: { error in
+                        print("失敗", error.localizedDescription)
+                       })
     }
     
 }

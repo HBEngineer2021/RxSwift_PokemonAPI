@@ -52,7 +52,7 @@ struct APIClient {
         
         return AF.request(request).responseJSON { response in
             switch response.result {
-            case .success(let data): completion(.success(data as! Decodable))
+            case .success(_): completion(.success(response.data))
             case .failure(let error): completion(.failure(error))
             }
         }

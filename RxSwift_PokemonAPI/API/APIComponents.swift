@@ -14,7 +14,7 @@ enum APIComponents {
     var path: String {
         switch self {
         case .pokemon_limit:
-            return "pokemon?limit="
+            return "pokemon/1"
         }
     }
     
