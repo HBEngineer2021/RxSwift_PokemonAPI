@@ -7,12 +7,13 @@
 
 import Foundation
 import Alamofire
+import RxSwift
 
 /// API Protocol
 protocol APIBaseProtocol {
     
     /// レスポンスタイプ
-    associatedtype ResponseType
+    associatedtype ResponseType: Decodable
     
     /// GET, POST等
     var method: HTTPMethod { get }
@@ -37,8 +38,8 @@ extension APIBaseProtocol {
         return APIComponents.header
     }
     
-    /*var decode: (Data) throws -> ResponseType {
-        return { try! JSONDecoder }
-    }*/
+    var decode: (Data) throws -> ResponseType {
+        return { try JSONDecoder.decoder.decode(ResponseType.self, from: $0) }
+    }
     
 }

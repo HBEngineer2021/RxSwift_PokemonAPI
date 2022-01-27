@@ -14,7 +14,7 @@ protocol APIBaseRequestProtocol: APIBaseProtocol, URLRequestConvertible {
 }
 
 extension APIBaseRequestProtocol {
-    var encoding: URLEncoding? {
+    var encoding: URLEncoding {
         return URLEncoding.default
     }
     
