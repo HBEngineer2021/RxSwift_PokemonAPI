@@ -12,7 +12,9 @@ import RxCocoa
 
 class PokemonViewController: UIViewController {
     
-    let list = ["セル"]
+    typealias Element = [ViewModels]
+    
+    static var item = [ViewModels]()
     
     let disposeBag = DisposeBag()
     
@@ -28,7 +30,6 @@ class PokemonViewController: UIViewController {
         tableView.dataSource = self
         self.view.addSubview(tableView)
         lauout()
-        apiCall()
     }
     
     func lauout() {
@@ -42,27 +43,17 @@ class PokemonViewController: UIViewController {
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
     }
     
-    func apiCall() {
-        APIClient.call(PokemonRequest.get, disposeBag,
-                       onSuccess: { responese in
-                        print("成功", responese.data?.debugDescription)
-                        print("成功", responese.result)
-                       },
-                       onError: { error in
-                        print("失敗", error.localizedDescription)
-                       })
-    }
     
 }
 
 extension PokemonViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.list.count
+        PokemonViewController.item.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
-        cell?.textLabel?.text = list[indexPath.row]
+        cell?.textLabel?.text = PokemonViewController.item[indexPath.row].name
         cell?.backgroundColor = .black
         cell?.textLabel?.textColor = .white
         return cell!

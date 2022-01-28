@@ -42,15 +42,6 @@ struct Pokemon: Decodable {
         case sprites = "sprites"
         case typeList = "types"
     }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        name = try container.decode(String.self, forKey: .name)
-        sprites = try container.decode(Sprites.self, forKey: .sprites)
-        typeList = try container.decode([TypeList].self, forKey: .typeList)
-        id = Int(try container.decode(String.self, forKey: .id))!
-    }
 }
 
 struct ViewModels {
