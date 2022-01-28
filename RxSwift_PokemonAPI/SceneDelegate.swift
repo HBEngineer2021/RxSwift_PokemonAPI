@@ -11,7 +11,7 @@ import Alamofire
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
-
+    
     let navigationController = UINavigationController()
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -19,12 +19,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
-        apiCall()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            let dest = PokemonViewController()
-            self.navigationController.setViewControllers([dest], animated: true)
-            self.window?.rootViewController = self.navigationController
-        }
+        
+        navigationController.navigationBar.isHidden = true
+        let dest = PokemonViewController()
+        self.navigationController.setViewControllers([dest], animated: true)
+        self.window?.rootViewController = self.navigationController
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -54,27 +53,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-    
-    func apiCall() {
-        /*APIClient.call(PokemonRequest.get, disposeBag,
-         onSuccess: { responese in
-         print("成功", responese.data?.debugDescription)
-         print("成功", responese.result)
-         },
-         onError: { error in
-         print("失敗", error.localizedDescription)
-         })*/
-        let prams: Parameters = [:]
-        APIRequest.shared.get(path: "1", prams: prams, type: Pokemon.self) {
-            (response) in
-            PokemonViewController.item.append(ViewModels(id: response.id, name: response.name, image: response.sprites.frontDefault))
-            print(response.id)
-            print(response.name)
-            print(response.sprites.frontDefault)
-            print(response.typeList)
-        }
-    }
-    
     
 }
 

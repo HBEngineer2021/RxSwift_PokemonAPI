@@ -44,7 +44,7 @@ struct Pokemon: Decodable {
     }
 }
 
-struct ViewModels {
+struct ViewModels: Decodable {
     var id: Int
     var name: String
     var image: String
