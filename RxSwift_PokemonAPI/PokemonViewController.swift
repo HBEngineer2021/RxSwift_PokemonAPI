@@ -12,8 +12,9 @@ import RxCocoa
 
 class PokemonViewController: UIViewController {
     
-    var item: Observable<[ViewModels]>? = .just([ViewModels(id: 1, name: "セル", image: ""),
-                                                ViewModels(id: 2, name: "セル", image: "")])
+    var item: Observable<[ViewModels]>?
+    
+    let apiRequest = APIRequest()
     
     let disposeBag = DisposeBag()
     
@@ -28,24 +29,38 @@ class PokemonViewController: UIViewController {
         self.view.addSubview(tableView)
         lauout()
         request()
-        setupBindings()
+        tapTableViewCell()
     }
     
     func request() {
-        let path = "1"
-        let prams: Parameters = [:]
-        
-        _ = APIRequest.shared.get(path: path, prams: prams, type: Pokemon.self) { (response) in
-            self.item = .just([ViewModels(id: response.id, name: response.name, image: response.sprites.frontDefault)])
-            
-        }
+        let path = "pokemon/1"
+        let params: Parameters? = [:]/*= ["limit":"100",
+         "offset":"200"]*/
+        apiRequest.get(path: path, prams: params!, type: Pokemon.self)
+            .map { response in
+                self.item = .just([ViewModels(id: response.id, name: response.name, image: response.sprites.frontDefault)])
+            }
+            .bind(onNext: {
+                self.setupBindings()
+            })
+            .disposed(by: disposeBag)
     }
     
     func setupBindings() {
+        
         item?.bind(to: tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
             cell.textLabel?.text = "\(element.id). " + element.name
-            cell.backgroundColor = .black
+            cell.imageView?.image = UIImage.init(url: element.image)
+            cell.backgroundColor = .white
         }
+        .disposed(by: disposeBag)
+    }
+    
+    func tapTableViewCell() {
+        tableView.rx.itemSelected.subscribe(onNext: { indexPath in
+            self.tableView.deselectRow(at: indexPath, animated: true)
+            print(indexPath.row)
+        })
         .disposed(by: disposeBag)
     }
     
@@ -60,4 +75,18 @@ class PokemonViewController: UIViewController {
         NSLayoutConstraint.activate([leading, trailing, top, bottom])
     }
     
+}
+
+extension UIImage {
+   public convenience init(url: String) {
+       let url = URL(string: url)
+       do {
+           let data = try Data(contentsOf: url!)
+           self.init(data: data)!
+           return
+       } catch let err {
+           print("Error : \(err.localizedDescription)")
+       }
+       self.init()
+   }
 }
