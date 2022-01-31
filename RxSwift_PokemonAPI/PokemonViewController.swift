@@ -28,19 +28,21 @@ class PokemonViewController: UIViewController {
         super.viewDidLoad()
         self.view.addSubview(tableView)
         lauout()
-        getData()
         tapTableViewCell()
+        generate()
     }
     
-    func getData() {
-        let path = "pokemon/1"
+    /// APIを叩く
+    func getData(num: Int) {
+        let path = "pokemon/\(num)"
         let params: Parameters? = [:]
         apiRequest.get(path: path, prams: params!, type: Pokemon.self)
             .map { response in
                 self.item = .just([ViewModels(id: response.id, name: response.name, image: response.sprites.frontDefault)])
+                print(response.id)
             }
             .bind(onNext: {
-                self.setupBindings()
+                //self.setupBindings()
             })
             .disposed(by: disposeBag)
     }
@@ -58,6 +60,7 @@ class PokemonViewController: UIViewController {
         .disposed(by: disposeBag)
     }
     
+    /// セル押下時の処理
     func tapTableViewCell() {
         tableView.rx.itemSelected.subscribe(onNext: { indexPath in
             self.tableView.deselectRow(at: indexPath, animated: true)
@@ -66,6 +69,16 @@ class PokemonViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    /// ストリームでのfor文
+    func generate() {
+        let obj = Observable.generate(initialState: 1, condition: { $0 <= 100 }) { $0 + 1 }
+        obj.bind(onNext: { i in
+            self.getData(num: i)
+        })
+        .disposed(by: disposeBag)
+    }
+    
+    /// tableViewのレイアウトを調整
     func lauout() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .white
@@ -80,6 +93,7 @@ class PokemonViewController: UIViewController {
     
 }
 
+/// URLを画像データに変換
 extension UIImage {
     public convenience init(url: String) {
         let url = URL(string: url)

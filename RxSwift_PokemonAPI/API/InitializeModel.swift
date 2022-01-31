@@ -17,7 +17,7 @@ class ViewModel {
     
     init(_ model: ViewModels) {
         rx_model = BehaviorRelay(value: model)
-        rx_withOldValue = 
+        //rx_withOldValue = 
             
         
     }
