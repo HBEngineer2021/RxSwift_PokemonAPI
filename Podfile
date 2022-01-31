@@ -8,7 +8,9 @@ target 'RxSwift_PokemonAPI' do
   # Pods for RxSwift_PokemonAPI
   pod 'Alamofire'
   pod 'RxSwift'
-  pod 'RxCocoa'  
+  pod 'RxCocoa'
+  pod 'Realm'  
+  pod 'RealmSwift'
   target 'RxSwift_PokemonAPITests' do
     inherit! :search_paths
     # Pods for testing

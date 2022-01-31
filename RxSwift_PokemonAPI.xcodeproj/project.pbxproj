@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		317BE3B789F4219967A1B351 /* Pods_RxSwift_PokemonAPITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D672860A288BA250BADF5FA /* Pods_RxSwift_PokemonAPITests.framework */; };
 		505AF751FB002BDC6506E7C5 /* Pods_RxSwift_PokemonAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47EC550633AFB1A765600889 /* Pods_RxSwift_PokemonAPI.framework */; };
+		BB3B126427A7AADA00A02672 /* InitializeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3B126327A7AADA00A02672 /* InitializeModel.swift */; };
+		BB3B126627A7C70300A02672 /* RealmDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB3B126527A7C70300A02672 /* RealmDB.swift */; };
 		BBA8ACB327A39C0C0041B82A /* BaseConnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA8ACB227A39C0C0041B82A /* BaseConnect.swift */; };
 		D717605B27A18C60006A8351 /* APIComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717605A27A18C60006A8351 /* APIComponents.swift */; };
 		D717605D27A19093006A8351 /* APIBaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D717605C27A19093006A8351 /* APIBaseProtocol.swift */; };
@@ -53,6 +55,8 @@
 		53DA02A429890175E2791135 /* Pods-RxSwift_PokemonAPITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxSwift_PokemonAPITests.debug.xcconfig"; path = "Target Support Files/Pods-RxSwift_PokemonAPITests/Pods-RxSwift_PokemonAPITests.debug.xcconfig"; sourceTree = "<group>"; };
 		6D672860A288BA250BADF5FA /* Pods_RxSwift_PokemonAPITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RxSwift_PokemonAPITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		70FF26289275FAE44929A7B7 /* Pods_RxSwift_PokemonAPI_RxSwift_PokemonAPIUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RxSwift_PokemonAPI_RxSwift_PokemonAPIUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB3B126327A7AADA00A02672 /* InitializeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitializeModel.swift; sourceTree = "<group>"; };
+		BB3B126527A7C70300A02672 /* RealmDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmDB.swift; sourceTree = "<group>"; };
 		BBA8ACB227A39C0C0041B82A /* BaseConnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseConnect.swift; sourceTree = "<group>"; };
 		D717605A27A18C60006A8351 /* APIComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIComponents.swift; sourceTree = "<group>"; };
 		D717605C27A19093006A8351 /* APIBaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIBaseProtocol.swift; sourceTree = "<group>"; };
@@ -141,6 +145,8 @@
 				D71E3A7027A2D01F00EBB0F2 /* APIResult.swift */,
 				D71E3A7227A2DF8800EBB0F2 /* APIClient.swift */,
 				BBA8ACB227A39C0C0041B82A /* BaseConnect.swift */,
+				BB3B126327A7AADA00A02672 /* InitializeModel.swift */,
+				BB3B126527A7C70300A02672 /* RealmDB.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -441,10 +447,12 @@
 				D7C4ADBF27A188F80085D94B /* PokemonViewController.swift in Sources */,
 				D71E3A7127A2D01F00EBB0F2 /* APIResult.swift in Sources */,
 				D71E3A6F27A2CAA900EBB0F2 /* PokemonRequest.swift in Sources */,
+				BB3B126627A7C70300A02672 /* RealmDB.swift in Sources */,
 				D71E3A7327A2DF8800EBB0F2 /* APIClient.swift in Sources */,
 				D7C4ADBB27A188F80085D94B /* AppDelegate.swift in Sources */,
 				D7C4ADBD27A188F80085D94B /* SceneDelegate.swift in Sources */,
 				D717605D27A19093006A8351 /* APIBaseProtocol.swift in Sources */,
+				BB3B126427A7AADA00A02672 /* InitializeModel.swift in Sources */,
 				BBA8ACB327A39C0C0041B82A /* BaseConnect.swift in Sources */,
 				D717606027A1990C006A8351 /* APIBaseRequestProtocol.swift in Sources */,
 				D717605B27A18C60006A8351 /* APIComponents.swift in Sources */,

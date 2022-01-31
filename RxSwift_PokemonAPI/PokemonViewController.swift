@@ -11,11 +11,8 @@ import RxSwift
 import RxCocoa
 
 class PokemonViewController: UIViewController {
-    let entries = BehaviorRelay(value: [ViewModels]())
-    
+        
     var item: Observable<[ViewModels]>?
-    
-    var event: PublishSubject<Event<ViewModels>>?
     
     let apiRequest = APIRequest()
     
@@ -32,31 +29,23 @@ class PokemonViewController: UIViewController {
         self.view.addSubview(tableView)
         lauout()
         getData()
-        //entriesAction()
-        //setupBindings()
         tapTableViewCell()
-        self.tableView.reloadData()
     }
     
     func getData() {
-        for i in 1...100 {
-            let path = "pokemon/\(i)"
-            let params: Parameters? = [:]/*= ["limit":"100",
-                                          "offset":"200"]*/
-            let request = apiRequest.get(path: path, prams: params!, type: Pokemon.self)
-                .map { response in
-                    self.item = .just([ViewModels(id: response.id, name: response.name, image: response.sprites.frontDefault)])
-                    print(response.id)
-                    print(response.name)
-                }
-            request
-                .bind(onNext: {
-                    self.setupBindings()
-                })
-                .disposed(by: disposeBag)
-        }
+        let path = "pokemon/1"
+        let params: Parameters? = [:]
+        apiRequest.get(path: path, prams: params!, type: Pokemon.self)
+            .map { response in
+                self.item = .just([ViewModels(id: response.id, name: response.name, image: response.sprites.frontDefault)])
+            }
+            .bind(onNext: {
+                self.setupBindings()
+            })
+            .disposed(by: disposeBag)
     }
     
+    // - TODO: TableViewの更新処理が反映されていない
     func setupBindings() {
         item?.asDriver(onErrorDriveWith: Driver.empty()).drive(tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
             //bind(to: tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
@@ -74,29 +63,8 @@ class PokemonViewController: UIViewController {
             self.tableView.deselectRow(at: indexPath, animated: true)
             print(indexPath.row)
         })
-        .disposed(by: disposeBag)
+            .disposed(by: disposeBag)
     }
-    
-    /*func eventAction() {
-        event?.asObservable().subscribe(onNext: { event in
-            if event != nil {
-                self.reloadData(event)
-            }
-        })
-        .disposed(by: disposeBag)
-    }
-    
-    func reloadData(_ data: Event<ViewModels>) {
-        data.event
-        self.tableView.reloadData()
-    }
-    
-    func entriesAction() {
-        entries.asDriver().drive(onNext: { i in
-            print(i.count)
-        })
-        .disposed(by: disposeBag)
-    }*/
     
     func lauout() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
