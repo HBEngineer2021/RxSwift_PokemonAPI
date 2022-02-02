@@ -12,13 +12,11 @@ import UIKit
 
 class ViewModel {
     
-    var rx_model: BehaviorRelay<ViewModels>?
-    var rx_withOldValue: Observable<(new: ViewModels, old: ViewModels)>?
+    var viewList: [ViewModels] = []
     
-    init(_ model: ViewModels) {
-        rx_model = BehaviorRelay(value: model)
-        //rx_withOldValue = 
-            
-        
+    var relayItems: BehaviorRelay<[ViewModels]>?
+    
+    init() {
+        relayItems = BehaviorRelay<[ViewModels]>(value: viewList)
     }
 }

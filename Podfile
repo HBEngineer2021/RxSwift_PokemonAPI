@@ -9,6 +9,7 @@ target 'RxSwift_PokemonAPI' do
   pod 'Alamofire'
   pod 'RxSwift'
   pod 'RxCocoa'
+  pod 'RxDataSources'
   pod 'Realm'  
   pod 'RealmSwift'
   target 'RxSwift_PokemonAPITests' do

@@ -11,10 +11,10 @@ import RxSwift
 import RxCocoa
 
 class PokemonViewController: UIViewController {
-        
+    
     var item: Observable<[ViewModels]>?
     
-    let apiRequest = APIRequest()
+    var itemList = [ViewModels]()
     
     let disposeBag = DisposeBag()
     
@@ -27,37 +27,57 @@ class PokemonViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.addSubview(tableView)
+        self.tableView.dataSource = nil
+        self.tableView.delegate = nil
         lauout()
         tapTableViewCell()
-        generate()
+        //generate()
     }
     
     /// APIを叩く
-    func getData(num: Int) {
+    func getData(num: Int) -> Observable<[ViewModels]> {
         let path = "pokemon/\(num)"
         let params: Parameters? = [:]
-        apiRequest.get(path: path, prams: params!, type: Pokemon.self)
-            .map { response in
-                self.item = .just([ViewModels(id: response.id, name: response.name, image: response.sprites.frontDefault)])
-                print(response.id)
-            }
-            .bind(onNext: {
-                //self.setupBindings()
-            })
-            .disposed(by: disposeBag)
+        
+        let request = APIRequest.shared.get(path: path, prams: params!, type: Pokemon.self)
+            .map { response -> [ViewModels] in
+                self.itemList.append(ViewModels(id: response.id, name: response.name, image: response.sprites.frontDefault))
+                return self.itemList
+            }.share()
+        
+        /*request.subscribe(onNext: { result in
+         print(result.count)
+         }).disposed(by: disposeBag)
+         
+         request.bind(to: self.tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
+         //cell.textLabel?.text = "\(element.id).　" + element.name
+         cell.textLabel?.textColor = .black
+         cell.heightAnchor.constraint(equalToConstant: 100).isActive = true
+         //cell.imageView?.image = UIImage.init(url: element.image)
+         cell.backgroundColor = .white
+         }.disposed(by: disposeBag)*/
+        
+        return request
     }
     
     // - TODO: TableViewの更新処理が反映されていない
     func setupBindings() {
-        item?.asDriver(onErrorDriveWith: Driver.empty()).drive(tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
-            //bind(to: tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
+        /*item?.asDriver(onErrorDriveWith: Driver.empty()).drive(tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
+         //bind(to: tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
+         cell.textLabel?.text = "\(element.id).　" + element.name
+         cell.textLabel?.textColor = .black
+         cell.heightAnchor.constraint(equalToConstant: 100).isActive = true
+         cell.imageView?.image = UIImage.init(url: element.image)
+         cell.backgroundColor = .white
+         }.disposed(by: disposeBag)*/
+        
+        item?.bind(to: tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
             cell.textLabel?.text = "\(element.id).　" + element.name
             cell.textLabel?.textColor = .black
             cell.heightAnchor.constraint(equalToConstant: 100).isActive = true
             cell.imageView?.image = UIImage.init(url: element.image)
             cell.backgroundColor = .white
-        }
-        .disposed(by: disposeBag)
+        }.disposed(by: disposeBag)
     }
     
     /// セル押下時の処理
@@ -70,12 +90,15 @@ class PokemonViewController: UIViewController {
     }
     
     /// ストリームでのfor文
-    func generate() {
+    func generate() -> Observable<Int> {
         let obj = Observable.generate(initialState: 1, condition: { $0 <= 100 }) { $0 + 1 }
         obj.bind(onNext: { i in
-            self.getData(num: i)
+            self.getData(num: i).subscribe(onNext: { list in
+                print(list.count)
+            }).disposed(by: self.disposeBag)
         })
         .disposed(by: disposeBag)
+        return obj
     }
     
     /// tableViewのレイアウトを調整
