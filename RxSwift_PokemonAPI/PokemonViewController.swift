@@ -9,10 +9,13 @@ import UIKit
 import Alamofire
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 class PokemonViewController: UIViewController {
     
     var item: Observable<[ViewModels]>?
+    
+    var items: BehaviorRelay<[SectionModel]> = BehaviorRelay(value: [])
     
     var itemList = [ViewModels]()
     
@@ -24,6 +27,21 @@ class PokemonViewController: UIViewController {
         return tableView
     }()
     
+    let dataSource = RxTableViewSectionedReloadDataSource<SectionModel>(configureCell: {
+        ds, tv, ip, item in
+        let cell = tv.dequeueReusableCell(withIdentifier: "cell", for: ip)
+        cell.textLabel?.text = "\(item.id).　" + item.name
+        cell.textLabel?.textColor = .black
+        cell.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        cell.imageView?.image = UIImage.init(url: item.image)
+        cell.backgroundColor = .white
+        return cell
+    },
+    titleForHeaderInSection: {
+        ds, index in
+        return ds.sectionModels[index].header
+    })
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.addSubview(tableView)
@@ -31,53 +49,23 @@ class PokemonViewController: UIViewController {
         self.tableView.delegate = nil
         lauout()
         tapTableViewCell()
-        //generate()
+        generate()
+        self.items
+            .bind(to: self.tableView.rx.items(dataSource: self.dataSource))
+            .disposed(by: self.disposeBag)
     }
     
     /// APIを叩く
-    func getData(num: Int) -> Observable<[ViewModels]> {
+    func getData(num: Int) {
         let path = "pokemon/\(num)"
-        let params: Parameters? = [:]
-        
-        let request = APIRequest.shared.get(path: path, prams: params!, type: Pokemon.self)
-            .map { response -> [ViewModels] in
-                self.itemList.append(ViewModels(id: response.id, name: response.name, image: response.sprites.frontDefault))
-                return self.itemList
-            }.share()
-        
-        /*request.subscribe(onNext: { result in
-         print(result.count)
-         }).disposed(by: disposeBag)
-         
-         request.bind(to: self.tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
-         //cell.textLabel?.text = "\(element.id).　" + element.name
-         cell.textLabel?.textColor = .black
-         cell.heightAnchor.constraint(equalToConstant: 100).isActive = true
-         //cell.imageView?.image = UIImage.init(url: element.image)
-         cell.backgroundColor = .white
-         }.disposed(by: disposeBag)*/
-        
-        return request
-    }
-    
-    // - TODO: TableViewの更新処理が反映されていない
-    func setupBindings() {
-        /*item?.asDriver(onErrorDriveWith: Driver.empty()).drive(tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
-         //bind(to: tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
-         cell.textLabel?.text = "\(element.id).　" + element.name
-         cell.textLabel?.textColor = .black
-         cell.heightAnchor.constraint(equalToConstant: 100).isActive = true
-         cell.imageView?.image = UIImage.init(url: element.image)
-         cell.backgroundColor = .white
-         }.disposed(by: disposeBag)*/
-        
-        item?.bind(to: tableView.rx.items(cellIdentifier: "cell")) { row, element, cell in
-            cell.textLabel?.text = "\(element.id).　" + element.name
-            cell.textLabel?.textColor = .black
-            cell.heightAnchor.constraint(equalToConstant: 100).isActive = true
-            cell.imageView?.image = UIImage.init(url: element.image)
-            cell.backgroundColor = .white
-        }.disposed(by: disposeBag)
+        APIRequest.shared.getPokeApiData(path: path)
+            .bind(onNext: { response in
+                let newModel = [SectionModel(header: "", num: num,
+                                             items: [ViewModels(id: response.id, name: response.name, image: response.sprites.frontDefault)])]
+                let newValue = self.items.value + newModel
+                self.items.accept(newValue)
+                print(self.items.value)
+            }).disposed(by: disposeBag)
     }
     
     /// セル押下時の処理
@@ -86,19 +74,15 @@ class PokemonViewController: UIViewController {
             self.tableView.deselectRow(at: indexPath, animated: true)
             print(indexPath.row)
         })
-            .disposed(by: disposeBag)
+        .disposed(by: disposeBag)
     }
     
     /// ストリームでのfor文
-    func generate() -> Observable<Int> {
+    func generate() {
         let obj = Observable.generate(initialState: 1, condition: { $0 <= 100 }) { $0 + 1 }
         obj.bind(onNext: { i in
-            self.getData(num: i).subscribe(onNext: { list in
-                print(list.count)
-            }).disposed(by: self.disposeBag)
-        })
-        .disposed(by: disposeBag)
-        return obj
+            self.getData(num: i)
+        }).disposed(by: self.disposeBag)
     }
     
     /// tableViewのレイアウトを調整

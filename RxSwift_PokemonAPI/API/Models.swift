@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxDataSources
 
 struct PokemonAPIResponse: Decodable {
     var data: [Pokemon]?
@@ -44,8 +45,39 @@ struct Pokemon: Decodable {
     }
 }
 
+struct PokemonAPI: Decodable {
+    var results: [Results]
+    private enum CodingKeys: String, CodingKey {
+        case results = "results"
+    }
+}
+
+struct Results: Decodable, Identifiable {
+    var id = UUID()
+    var name: String
+    var url: String
+    private enum CodingKeys: String, CodingKey {
+        case name = "name"
+        case url = "url"
+    }
+}
+
+
 struct ViewModels: Decodable {
     var id: Int
     var name: String
     var image: String
+}
+
+struct SectionModel {
+    var header: String
+    var num: Int
+    var items: [ViewModels]
+}
+
+extension SectionModel: SectionModelType {
+    init(original: SectionModel, items: [ViewModels]) {
+        self = original
+        self.items = items
+    }
 }
